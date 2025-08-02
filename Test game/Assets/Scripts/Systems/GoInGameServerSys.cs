@@ -32,22 +32,33 @@ partial struct GoInGameServerSys : ISystem
 
                 Debug.Log("Client Connected to Server!");
 
-            //spawning player at random range to avoid collisions with other players
-            Entity playerEntity = entityCommandBuffer.Instantiate(entitiesReferences.playerPrefabEntity);
-            entityCommandBuffer.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(UnityEngine.Random.Range(-5, 5), 0, 0)));
+                NetworkId networkId = SystemAPI.GetComponent<NetworkId>(receiveRpcCommandRequest.ValueRO.SourceConnection);
+                //spawning player at random range to avoid collisions with other players
+                Entity playerEntity;
+                if (networkId.Value == 1)
+                {
+                    playerEntity = entityCommandBuffer.Instantiate(entitiesReferences.playerPrefabEntity);
+                }
+                else
+                {
+                    playerEntity = entityCommandBuffer.Instantiate(entitiesReferences.player2PrefabEntity);
+                }
 
-            //assigning ghost ownership to the connecting client
-            NetworkId networkId = SystemAPI.GetComponent<NetworkId>(receiveRpcCommandRequest.ValueRO.SourceConnection);
-            entityCommandBuffer.AddComponent(playerEntity, new GhostOwner
-            {
-                NetworkId = networkId.Value
-            });
+                entityCommandBuffer.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(UnityEngine.Random.Range(-5, 5), 0, 0)));
 
-            //cleanup disconnected player
-            entityCommandBuffer.AppendToBuffer(receiveRpcCommandRequest.ValueRO.SourceConnection, new LinkedEntityGroup
-            {
-                Value = playerEntity
-            });
+
+
+                //assigning ghost ownership to the connecting client
+                entityCommandBuffer.AddComponent(playerEntity, new GhostOwner
+                {
+                    NetworkId = networkId.Value
+                });
+
+                //cleanup disconnected player
+                entityCommandBuffer.AppendToBuffer(receiveRpcCommandRequest.ValueRO.SourceConnection, new LinkedEntityGroup
+                {
+                    Value = playerEntity
+                });
 
                 entityCommandBuffer.DestroyEntity(entity);
             }

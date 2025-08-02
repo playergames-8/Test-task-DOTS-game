@@ -4,7 +4,7 @@ using UnityEngine;
 public class EntitiesRefrencesAuthoring : MonoBehaviour
 {
     public GameObject playerPrefabGameObject;
-    public Animator playerAnimator;
+    public GameObject player2PrefabGameObject;
 
     public class Baker : Baker<EntitiesRefrencesAuthoring>
     {
@@ -13,14 +13,16 @@ public class EntitiesRefrencesAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new EntitiesReferences
             {
-                playerPrefabEntity = GetEntity(authoring.playerPrefabGameObject, TransformUsageFlags.Dynamic)
-
+                playerPrefabEntity = GetEntity(authoring.playerPrefabGameObject, TransformUsageFlags.Dynamic),
+                player2PrefabEntity = GetEntity(authoring.player2PrefabGameObject, TransformUsageFlags.Dynamic)
             });
+
         }
     }
 }
 public struct EntitiesReferences : IComponentData
 {
     public Entity playerPrefabEntity;
-    public Entity playerAnimatorEntity;
+    public Entity player2PrefabEntity;
+
 }

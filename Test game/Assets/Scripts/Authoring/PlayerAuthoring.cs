@@ -9,6 +9,10 @@ public class PlayerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new Player());
+            AddComponent(entity, new PlayerAnimationState
+            {
+                Value = AnimationState.Idle // start idle
+            });
         }
     }
 }

@@ -11,14 +11,15 @@ GameObject:
   - component: {fileID: 7324727431180514674}
   - component: {fileID: 8879337383192917424}
   - component: {fileID: 8520644756583590803}
-  - component: {fileID: 3677381226529288089}
-  - component: {fileID: 7174223715055366308}
+  - component: {fileID: 8806346821348969459}
   - component: {fileID: 4433162983725562160}
+  - component: {fileID: 7174223715055366308}
+  - component: {fileID: 3677381226529288089}
   - component: {fileID: -2238237769651892036}
   - component: {fileID: -2894733556603432358}
-  - component: {fileID: 8806346821348969459}
+  - component: {fileID: -1880451174713611475}
   m_Layer: 0
-  m_Name: PlayerHumanModel
+  m_Name: Player1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,30 +93,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3677381226529288089
-MonoBehaviour:
+--- !u!95 &8806346821348969459
+Animator:
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5758445644277751606}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98c0e3568e1c6e1459b1a279aa19f281, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7174223715055366308
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758445644277751606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Avatar: {fileID: 9000000, guid: 1841c298173cdad4db8df8602c8f1c8d, type: 3}
+  m_Controller: {fileID: 9100000, guid: 1c4417770ae00a24ebf4d58fa74925f9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &4433162983725562160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,6 +139,30 @@ MonoBehaviour:
   UsePreSerialization: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
+--- !u!114 &7174223715055366308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758445644277751606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3677381226529288089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758445644277751606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98c0e3568e1c6e1459b1a279aa19f281, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-2238237769651892036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,25 +187,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3ce0b52ecd37a84fbaa78ccb231e737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!95 &8806346821348969459
-Animator:
-  serializedVersion: 7
+--- !u!114 &-1880451174713611475
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5758445644277751606}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 1841c298173cdad4db8df8602c8f1c8d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1c4417770ae00a24ebf4d58fa74925f9, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6ab3e94c6cb7d544a9a311d7505bc2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerAnimator: {fileID: 8806346821348969459}
