@@ -22,29 +22,56 @@ partial struct GoInGameServerSys : ISystem
 
         EntitiesReferences entitiesReferences = SystemAPI.GetSingleton<EntitiesReferences>();
 
-        //connecting all clients who have a request rpc and setting them as ingame
+        int inGamePlayerCount = 0;
+        foreach (var networkStreamInGame in SystemAPI.Query<RefRO<NetworkStreamInGame>>())
+        {
+            inGamePlayerCount++;
+        }
+
+        //looking for clients with connection rpc request
         foreach ((RefRO<ReceiveRpcCommandRequest> receiveRpcCommandRequest, Entity entity)
             in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>>()
             .WithAll<GoInGameRequestRpc>()
             .WithEntityAccess())
             {
+                //setting as ingame
                 entityCommandBuffer.AddComponent<NetworkStreamInGame>(receiveRpcCommandRequest.ValueRO.SourceConnection);
-
                 Debug.Log("Client Connected to Server!");
 
+                if (inGamePlayerCount >= 2)
+                {
+                    Debug.LogWarning("Max players (2) reached on server. Connection rejected.");
+                    
+                    //sending rejection rpc to player
+                    entityCommandBuffer.AddComponent<ConnectionRejectedRpc>(entity);
+                    entityCommandBuffer.AddComponent<SendRpcCommandRequest>(entity, new SendRpcCommandRequest
+                    {
+                        TargetConnection = receiveRpcCommandRequest.ValueRO.SourceConnection
+                    });
+                    Debug.LogWarning("Sent RPC rejection to client: " + receiveRpcCommandRequest.ValueRO.SourceConnection);
+
+                    entityCommandBuffer.DestroyEntity(entity);
+                    continue;
+                }
+
+                //setting as ingame
+                entityCommandBuffer.AddComponent<NetworkStreamInGame>(receiveRpcCommandRequest.ValueRO.SourceConnection);
+                Debug.Log("Client Connected to Server!");
+
+                //spawning player 1 and 2 depending on entry order
                 NetworkId networkId = SystemAPI.GetComponent<NetworkId>(receiveRpcCommandRequest.ValueRO.SourceConnection);
-                //spawning player at random range to avoid collisions with other players
                 Entity playerEntity;
                 if (networkId.Value == 1)
                 {
                     playerEntity = entityCommandBuffer.Instantiate(entitiesReferences.playerPrefabEntity);
+                    entityCommandBuffer.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(-3, 0, 0)));
                 }
                 else
                 {
                     playerEntity = entityCommandBuffer.Instantiate(entitiesReferences.player2PrefabEntity);
+                    entityCommandBuffer.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(3, 0, 0)));
                 }
 
-                entityCommandBuffer.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(UnityEngine.Random.Range(-5, 5), 0, 0)));
 
 
 
@@ -65,4 +92,7 @@ partial struct GoInGameServerSys : ISystem
         entityCommandBuffer.Playback(state.EntityManager);
     }
 
+}
+public struct ConnectionRejectedRpc : IRpcCommand
+{
 }
