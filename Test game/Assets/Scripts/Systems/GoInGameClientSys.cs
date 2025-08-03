@@ -1,6 +1,9 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Networking.Transport;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 
@@ -16,7 +19,8 @@ partial struct GoInGameClientSys : ISystem
     //[BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer entityCommandBuffer = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+        var entityCommandBuffer = new EntityCommandBuffer(Allocator.Temp);
+
 
         foreach (var ( networkId, entity)
             in SystemAPI.Query<RefRO<NetworkId>>()
@@ -25,7 +29,7 @@ partial struct GoInGameClientSys : ISystem
             {
                 //sets itself as ingame
                 entityCommandBuffer.AddComponent<NetworkStreamInGame>(entity);
-                Debug.Log("Setting Client as InGame"); //idk why but it refuses to work with normal using UnityEngine at the top
+                Debug.Log("Setting Client as InGame");
                 
                 //asks the server to be set as ingame
                 Entity rpcEntity = entityCommandBuffer.CreateEntity();
@@ -33,18 +37,13 @@ partial struct GoInGameClientSys : ISystem
                 entityCommandBuffer.AddComponent(rpcEntity, new SendRpcCommandRequest());
             }
 
+        
+
         //listen for rejection from server
-        foreach (var (rpc, entity) in SystemAPI.Query<RefRO<ConnectionRejectedRpc>>().WithEntityAccess())
+        foreach (var (rpc, rpcEntity) in SystemAPI.Query<RefRO<ConnectionRejectedRpc>>().WithEntityAccess())
         {
             Debug.LogWarning("Connection rejected by server: game is full.");
-
-            entityCommandBuffer.DestroyEntity(entity);
-
-            foreach (var (conn, connectionEntity) in SystemAPI.Query<RefRO<NetworkStreamConnection>>().WithEntityAccess())
-            {
-                Debug.Log("Client disconnecting...");
-                state.EntityManager.DestroyEntity(connectionEntity);
-            }
+            entityCommandBuffer.DestroyEntity(rpcEntity);
         }
 
         entityCommandBuffer.Playback(state.EntityManager);
@@ -55,3 +54,9 @@ public struct GoInGameRequestRpc : IRpcCommand
 {
 
 }
+
+//NetworkConnection.State connectionState = m_ConnectionList.GetConnectionState(connectionId);
+//if (connectionState != NetworkConnection.State.Disconnecting)
+//{
+//    return connectionState;
+//}

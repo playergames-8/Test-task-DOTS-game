@@ -18,7 +18,7 @@ partial struct NetcodePlayerInputSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         //listening for movement keays input and changing vector value
-        foreach ((RefRW<NetcodePlayerInput> netcodePlayerInput, RefRW <MyValue> myValue)
+        foreach ((RefRW<NetcodePlayerInput> netcodePlayerInput, RefRW <MyValue> myValue) // REMEMBER TO REMOVE MYVALUE DURING CLEANUP
             in SystemAPI.Query<RefRW<NetcodePlayerInput>, RefRW<MyValue>>()
             .WithAll<GhostOwnerIsLocal>())
         {

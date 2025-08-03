@@ -15,7 +15,7 @@ partial struct GoInGameServerSys : ISystem
         state.RequireForUpdate<NetworkId>();
     }
 
-    [BurstCompile]
+    //[BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer entityCommandBuffer = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
@@ -37,26 +37,27 @@ partial struct GoInGameServerSys : ISystem
                 //setting as ingame
                 entityCommandBuffer.AddComponent<NetworkStreamInGame>(receiveRpcCommandRequest.ValueRO.SourceConnection);
                 Debug.Log("Client Connected to Server!");
-
+                
+                //player number cap
                 if (inGamePlayerCount >= 2)
                 {
                     Debug.LogWarning("Max players (2) reached on server. Connection rejected.");
-                    
+
                     //sending rejection rpc to player
-                    entityCommandBuffer.AddComponent<ConnectionRejectedRpc>(entity);
-                    entityCommandBuffer.AddComponent<SendRpcCommandRequest>(entity, new SendRpcCommandRequest
+                    Entity rpcEntity = entityCommandBuffer.CreateEntity();
+                    entityCommandBuffer.AddComponent<ConnectionRejectedRpc>(rpcEntity);
+                    entityCommandBuffer.AddComponent<SendRpcCommandRequest>(rpcEntity, new SendRpcCommandRequest
                     {
                         TargetConnection = receiveRpcCommandRequest.ValueRO.SourceConnection
                     });
                     Debug.LogWarning("Sent RPC rejection to client: " + receiveRpcCommandRequest.ValueRO.SourceConnection);
+                    
+                    //request disconnect from rejected client
+                    entityCommandBuffer.AddComponent<PendingDisconnectTag>(receiveRpcCommandRequest.ValueRO.SourceConnection);
 
                     entityCommandBuffer.DestroyEntity(entity);
                     continue;
                 }
-
-                //setting as ingame
-                entityCommandBuffer.AddComponent<NetworkStreamInGame>(receiveRpcCommandRequest.ValueRO.SourceConnection);
-                Debug.Log("Client Connected to Server!");
 
                 //spawning player 1 and 2 depending on entry order
                 NetworkId networkId = SystemAPI.GetComponent<NetworkId>(receiveRpcCommandRequest.ValueRO.SourceConnection);
@@ -71,9 +72,6 @@ partial struct GoInGameServerSys : ISystem
                     playerEntity = entityCommandBuffer.Instantiate(entitiesReferences.player2PrefabEntity);
                     entityCommandBuffer.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(3, 0, 0)));
                 }
-
-
-
 
                 //assigning ghost ownership to the connecting client
                 entityCommandBuffer.AddComponent(playerEntity, new GhostOwner
@@ -95,4 +93,5 @@ partial struct GoInGameServerSys : ISystem
 }
 public struct ConnectionRejectedRpc : IRpcCommand
 {
+
 }
